@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TradeX Journal</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root{--bg:#0b1020;--panel:#121a2b;--panel2:#182338;--line:#27344b;--text:#edf3ff;--muted:#8c9bb3;--green:#36d39a;--red:#ff727c;--blue:#7797ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,system-ui,Arial}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1200px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{background:#25365a;border:1px solid #3c5483;padding:11px;border-radius:12px;font-size:22px}.brand h1{font-size:20px;margin:0}.muted{color:var(--muted)}.tag{font-size:11px;border:1px solid var(--line);border-radius:30px;padding:6px 10px;color:#b7c6df}.nav{display:flex;gap:7px;overflow:auto;margin-bottom:20px}.nav button,.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:9px}.nav button.active,.btn.primary{background:#4567d8;border-color:#4567d8;color:white}.grid{display:grid;gap:13px}.stats{grid-template-columns:repeat(4,1fr)}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.label{font-size:12px;color:var(--muted)}.value{font-size:25px;font-weight:750;margin:8px 0 3px}.green{color:var(--green)}.red{color:var(--red)}.section{margin-top:15px}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.sectionhead h2{font-size:16px;margin:0}.calendar{grid-template-columns:repeat(7,minmax(0,1fr))}.day{min-height:78px;border:1px solid var(--line);border-radius:8px;padding:8px 5px;text-align:center;color:var(--muted);font-size:11px}.day b{display:block;font-size:12px;margin-top:10px}.day.win{background:#12352d;border-color:#21684f;color:#d9ffef}.day.loss{background:#3a202b;border-color:#76404a;color:#ffe4e7}.day.today{outline:1px solid var(--blue)}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:650px}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--line);white-space:nowrap}th{font-size:11px;color:var(--muted);font-weight:600}td{font-size:13px}.pill{padding:4px 8px;border-radius:20px;background:var(--panel2);font-size:11px}.actions{display:flex;gap:6px}.actions button{background:transparent;border:1px solid var(--line);color:var(--muted);padding:5px 8px;border-radius:6px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar input,.toolbar select,.field input,.field select,.field textarea{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px;border-radius:8px;width:100%}.toolbar input,.toolbar select{width:auto}.hidden{display:none!important}.modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:15px;z-index:5}.modalbox{width:min(600px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:20px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field.full{grid-column:1/-1}.field textarea{min-height:70px}.close{float:right;background:none;border:0;color:var(--muted);font-size:20px}.bar{height:12px;background:#27344b;border-radius:20px;overflow:hidden;display:flex}.bar span:first-child{background:var(--green)}.bar span:last-child{background:var(--red)}.empty{text-align:center;color:var(--muted);padding:25px}.notice{font-size:11px;color:var(--muted);line-height:1.5}.chartrow{display:grid;grid-template-columns:100px 1fr 80px;align-items:center;gap:10px;margin:12px 0;font-size:12px}.charttrack{height:9px;background:var(--panel2);border-radius:20px;overflow:hidden}.charttrack i{display:block;height:100%;background:var(--blue)}.draft{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;font-size:12px;background:var(--panel2)}.draft input{width:auto}@media(max-width:760px){.app{padding:14px}.stats{grid-template-columns:repeat(2,1fr)}.value{font-size:21px}.day{min-height:63px;padding:6px 2px}.day b{font-size:10px}.top{align-items:flex-start}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style></head><body>
+<section id="authscreen" style="min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 0%,#1b2c4b 0%,#0b1020 58%)">
+ <div class="card" style="width:min(440px,100%);padding:26px">
+  <div class="brand" style="margin-bottom:22px"><div class="logo">↗</div><div><h1>TradeX Journal</h1><div class="muted" style="font-size:12px">Your trading. Your data. Your edge.</div></div></div>
+  <div style="display:flex;gap:8px;margin-bottom:18px"><button class="btn primary" id="loginTab" type="button">Login</button><button class="btn" id="signupTab" type="button">Create account</button></div>
+  <form id="authform">
+   <div class="field" style="margin-bottom:12px"><label>Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+   <div class="field" style="margin-bottom:14px"><label>Password</label><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></div>
+   <button class="btn primary" id="authSubmit" type="submit" style="width:100%">Login</button>
+  </form>
+  <button class="btn" id="googleAuth" type="button" style="width:100%;margin-top:10px">Continue with Google</button>
+  <div id="authMessage" class="notice" role="status" style="margin-top:14px">Cloud login needs your Supabase project configuration. You can explore the demo without an account.</div>
+  <button class="btn" id="demoEnter" type="button" style="width:100%;margin-top:12px">Explore demo dashboard</button>
+  <div class="notice" style="margin-top:14px">Never enter your MT5/broker password here. TradeX uses separate secure authentication.</div>
+ </div>
+</section>
+<main class="app hidden" id="appRoot">
+<header class="top"><div class="brand"><div class="logo">↗</div><div><h1>TradeX Journal</h1><div class="muted" style="font-size:12px">Trading performance workspace</div></div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><span class="tag">USD · All markets</span><span class="tag" id="syncTag">Local only</span><span class="tag" id="userBadge">Demo</span><button class="btn" id="signout" type="button">Sign out</button></div></header>
+<nav class="nav"><button class="active" data-page="overview">Overview</button><button data-page="trades">Trade history</button><button data-page="analytics">Analytics</button><button data-page="accounts">Accounts & imports</button></nav>
+<section id="overview" class="page"><div class="grid stats"><div class="card"><div class="label">Net P&amp;L</div><div class="value" id="net">$0.00</div><div class="muted label">After recorded trades</div></div><div class="card"><div class="label">Win rate</div><div class="value" id="winrate">0%</div><div class="muted label" id="winlabel">0 winning trades</div></div><div class="card"><div class="label">Total trades</div><div class="value" id="total">0</div><div class="muted label">All recorded markets</div></div><div class="card"><div class="label">Profit factor</div><div class="value" id="pf">—</div><div class="muted label">Gross profit ÷ gross loss</div></div></div>
+<div class="card section"><div class="sectionhead"><h2>Monthly trading calendar</h2><div class="toolbar"><button class="btn" id="prev">←</button><strong id="monthlabel"></strong><button class="btn" id="next">→</button></div></div><div class="grid calendar" id="calendar"></div><div class="notice" id="monthsum" style="margin-top:12px;font-size:12px"></div><div class="notice" style="margin-top:6px">Green = positive day · Red = negative day · Values are based on your saved journal entries.</div></div>
+<div class="card section"><div class="sectionhead"><h2>Recent trades</h2><button class="btn primary" id="new1">＋ Add trade</button></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Symbol</th><th>Market</th><th>Side</th><th>Net P&amp;L</th></tr></thead><tbody id="recent"></tbody></table></div></div></section>
+<section id="trades" class="page hidden"><div class="sectionhead"><h2>Trade history</h2><div class="toolbar"><button class="btn" id="screenshotBtn" type="button">▧ Import Screenshot</button><button class="btn primary" id="new2">＋ Add trade</button></div></div><div class="card"><div class="toolbar" style="margin-bottom:12px"><input id="search" placeholder="Search symbol…"><select id="marketfilter"><option value="">All markets</option><option>Forex</option><option>Gold</option><option>Crypto</option><option>Other</option></select><select id="sidefilter"><option value="">Buy & Sell</option><option>Buy</option><option>Sell</option></select></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Symbol</th><th>Market</th><th>Side</th><th>Entry</th><th>Exit</th><th>Lots/Qty</th><th>Net P&amp;L</th><th>Notes</th><th>Actions</th></tr></thead><tbody id="history"></tbody></table></div><div id="noTrades" class="empty hidden">No trades yet. Add your first trade or import a CSV statement.</div></div></section>
+<section id="analytics" class="page hidden"><h2>Performance analytics</h2><div class="grid stats section"><div class="card"><div class="label">Gross profit</div><div class="value green" id="grosswin">$0</div></div><div class="card"><div class="label">Gross loss</div><div class="value red" id="grossloss">$0</div></div><div class="card"><div class="label">Average win</div><div class="value" id="avgwin">$0</div></div><div class="card"><div class="label">Average loss</div><div class="value" id="avgloss">$0</div></div></div><div class="card section"><h3>Market breakdown</h3><div id="marketstats"></div></div><div class="card section"><h3>Daily P&amp;L</h3><div id="dailyStats"></div></div></section>
+<section id="accounts" class="page hidden"><div class="card"><div class="sectionhead"><h2>Trading accounts</h2><button class="btn" id="addaccount">＋ Add account</button></div><div id="accountlist" class="muted">No accounts added.</div></div><div class="card section"><h2>Import / Export</h2><p class="muted">Import a CSV file with columns: date, symbol, market, side, entry, exit, quantity, pnl, fees, notes. MT5 history exports (Time, Type, Volume, Price, Commission, Swap, Profit) are also understood. Commission and swap are treated as MT5 does: negative = charge. Already-imported rows are skipped. Always check the result before relying on totals.</p><div class="toolbar"><label class="btn" for="csvfile">Import CSV</label><input id="csvfile" type="file" accept=".csv,.tsv,.txt,text/csv" hidden><button class="btn" id="export">Export trades CSV</button><button class="btn" id="clear">Clear all trades</button></div><p class="notice" id="importmsg"></p></div><div class="card section"><h2>MT5 connection</h2><p class="muted">Direct MT5 account sync is not enabled in this prototype. A production integration needs a secure backend and a MetaTrader 5 Expert Advisor or broker-supported API to send closed-trade records.</p><span class="tag">Not connected</span></div></section>
+<p class="notice section">Demo mode saves data only in this browser. When signed in, trades are cached in this browser and also synced to your cloud account. Do not enter broker passwords, API secrets, or sensitive account credentials.</p></main>
+<div class="modal hidden" id="modal"><div class="modalbox"><button class="close" id="close">×</button><h2 id="formtitle">Add trade</h2><form id="tradeform"><input id="editid" type="hidden"><div class="formgrid"><div class="field"><label>Date</label><input id="date" type="date" required></div><div class="field"><label>Symbol</label><input id="symbol" placeholder="XAUUSD / EURUSD / BTCUSD" required></div><div class="field"><label>Market</label><select id="market"><option>Gold</option><option>Forex</option><option>Crypto</option><option>Other</option></select></div><div class="field"><label>Side</label><select id="side"><option>Buy</option><option>Sell</option></select></div><div class="field"><label>Entry price</label><input id="entry" type="number" step="any"></div><div class="field"><label>Exit price</label><input id="exit" type="number" step="any"></div><div class="field"><label>Lots / Quantity</label><input id="qty" type="number" step="any" min="0"></div><div class="field"><label>Gross P&amp;L (USD)</label><input id="pnl" type="number" step="any" required></div><div class="field"><label>Fees / Commission / Swap cost (USD, cost = positive)</label><input id="fees" type="number" step="any" value="0"></div><div class="field"><label>Account</label><input id="acct" placeholder="Personal / Funded account"></div><div class="field full"><label>Trade notes / setup</label><textarea id="notes" placeholder="Why did you take this trade? What did you learn?"></textarea></div></div><div class="toolbar" style="justify-content:flex-end;margin-top:16px"><button type="button" class="btn" id="cancel">Cancel</button><button class="btn primary" type="submit">Save trade</button></div></form></div></div>
+<div class="modal hidden" id="screenshotModal"><div class="modalbox"><button class="close" id="shotClose" type="button">×</button><h2>Import Trade Screenshot</h2><p class="muted">Upload a broker history screenshot (gallery or camera). OCR reads the text and prepares editable trade drafts. Several trades in one screenshot are supported.</p><div class="field" style="margin:14px 0"><label>Select screenshot</label><input id="shotFile" type="file" accept="image/*"></div><img id="shotPreview" class="hidden" alt="Screenshot preview" style="max-width:100%;max-height:230px;object-fit:contain;border-radius:9px;border:1px solid var(--line);margin-bottom:12px"><div class="toolbar"><button class="btn primary" id="readShot" type="button">Read Screenshot</button><span id="shotStatus" class="notice" aria-live="polite"></span></div><div id="shotDrafts" class="hidden" style="margin-top:14px"></div><p class="notice">OCR can make mistakes. Review every field before saving. Internet is required to load OCR. For best results, crop to the trade rows and use a bright, sharp image.</p></div></div>
+
+<script>
+// Pure helpers (no DOM): date normalising, market guess, CSV line split, screenshot OCR text parsing
+const TXH=(()=>{
+ const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+ const DATE_RE=/(20\d{2}[-/.]\d{1,2}[-/.]\d{1,2})|(\d{1,2}[-/.]\d{1,2}[-/.]20\d{2})/g;
+ const SYM=/\b((?:XAU|XAG|BTC|ETH|USD|EUR|GBP|JPY|AUD|CAD|NZD|CHF)(?:USDT|USD|EUR|GBP|JPY|AUD|CAD|NZD|CHF))[a-z.#]{0,4}\b/i;
+ function normDate(s){s=String(s||'').trim();let m=s.match(/(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');m=s.match(/(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return ''}
+ function guessMarket(sym){sym=String(sym||'').toUpperCase();if(/^(XAU|XAG)/.test(sym))return 'Gold';if(/^(BTC|ETH)/.test(sym)||/USDT$/.test(sym))return 'Crypto';if(/^[A-Z]{6}/.test(sym))return 'Forex';return 'Other'}
+ function splitLine(line,d){const out=[];let v='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'&&line[i+1]==='"'&&q){v+='"';i++}else if(c==='"')q=!q;else if(c===d&&!q){out.push(v);v=''}else v+=c}out.push(v);return out}
+ function parseShot(raw){
+  const txt=String(raw||'').replace(/[−–—]/g,'-').replace(/(?<![\d.])(\d{1,3})[ ,](\d{3}(?:\.\d+)?)(?!\d)/g,'$1$2').replace(/,/g,'');
+  const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  const idx=[];lines.forEach((l,i)=>{if(SYM.test(l))idx.push(i)});
+  if(!idx.length)return [];
+  const gd=[...txt.matchAll(DATE_RE)].map(m=>normDate(m[0])).filter(Boolean);
+  const out=[];
+  idx.forEach((start,k)=>{
+   const end=Math.min(idx[k+1]??lines.length,start+4);
+   const block=lines.slice(start,end).join(' ');
+   const symbol=block.match(SYM)[1].toUpperCase();
+   const dates=[...block.matchAll(DATE_RE)].map(m=>normDate(m[0])).filter(Boolean);
+   const date=dates[dates.length-1]||gd[gd.length-1]||today();
+   let body=block.replace(DATE_RE,' ').replace(/\d{1,2}:\d{2}(?::\d{2})?/g,' ').replace(SYM,' ');
+   const sideM=body.match(/\b(buy|sell|long|short)\b/i);
+   const side=sideM?(/buy|long/i.test(sideM[1])?'Buy':'Sell'):'';
+   let qty='';
+   const qm=body.match(/\b(?:buy|sell|long|short)\b\s*[:x×]?\s*(\d+(?:\.\d+)?)/i)||body.match(/\b(?:volume|lots?|size)\b\s*:?\s*(\d+(?:\.\d+)?)/i);
+   if(qm){qty=Number(qm[1]);body=body.replace(qm[0],' ')}
+   let cost=0,hasCost=false;
+   body=body.replace(/\b(?:commission|swap|fees?)\b\s*:?\s*([-+]?\d+(?:\.\d+)?)/gi,(m,v)=>{cost-=Number(v);hasCost=true;return ' '});
+   let pnl=null;
+   body=body.replace(/\b(?:profit|p\/?l|net|result)\b\s*:?\s*([-+]?\d+\.\d+)/i,(m,v)=>{pnl=Number(v);return ' '});
+   const nums=[...body.matchAll(/[-+]?\d+\.\d+/g)].map(m=>Number(m[0]));
+   let entry='',exit='';
+   if(pnl!==null){if(nums.length>=2){entry=nums[0];exit=nums[1]}}
+   else if(nums.length>=3){entry=nums[0];exit=nums[1];pnl=nums[nums.length-1]}
+   else if(nums.length){pnl=nums[nums.length-1]}
+   out.push({date,symbol,market:guessMarket(symbol),side,entry,exit,qty,pnl:pnl===null?'':pnl,fees:hasCost?Math.round(cost*100)/100:0,acct:'',notes:'Imported from screenshot — verify OCR values.',check:!(side&&pnl!==null&&qty!==''&&entry!=='')});
+  });
+  return out;
+ }
+ return{today,normDate,guessMarket,splitLine,parseShot};
+})();
+</script>
+
+<script>
+(()=>{
+ const $=id=>document.getElementById(id);
+ const DEMO_KEY='tradex_journal_demo',LEGACY='tradex_journal_v1';
+ let KEY=null,trades=[],accounts=[],month=new Date();month.setDate(1);
+ const rd=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch{return f}};
+ const store=()=>{if(!KEY)return;try{localStorage.setItem(KEY,JSON.stringify(trades));localStorage.setItem(KEY+'_accounts',JSON.stringify(accounts))}catch(e){console.error(e)}};
+ const uid=()=>{if(window.crypto?.randomUUID)return crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:r&3|8).toString(16)})};
+ const cloud=()=>window.TradeXCloud;
+ const fmt=n=>'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const signed=n=>(n<0?'−':'+')+fmt(n);
+ const net=t=>Number(t.pnl||0)-Number(t.fees||0);
+ const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const dash=x=>safe(x===''||x==null?'—':x);
+ function commit(changed){store();render();if(changed?.length)cloud()?.upsertTrades?.(changed)}
+
+ function stats(){
+  const wins=trades.filter(t=>net(t)>0),loss=trades.filter(t=>net(t)<0),gp=wins.reduce((a,t)=>a+net(t),0),gl=-loss.reduce((a,t)=>a+net(t),0),total=gp-gl;
+  $('net').textContent=(total<0?'−':'')+fmt(total);$('net').className='value '+(total>=0?'green':'red');
+  $('winrate').textContent=(trades.length?wins.length/trades.length*100:0).toFixed(2)+'%';
+  $('winlabel').textContent=wins.length+' winning · '+loss.length+' losing';
+  $('total').textContent=trades.length;
+  $('pf').textContent=gl?(gp/gl).toFixed(2):gp?'∞':'—';
+  $('grosswin').textContent=fmt(gp);$('grossloss').textContent=fmt(gl);
+  $('avgwin').textContent=fmt(wins.length?gp/wins.length:0);$('avgloss').textContent=fmt(loss.length?gl/loss.length:0);
+  const groups={};trades.forEach(t=>{const k=t.market||'Other';groups[k]=(groups[k]||0)+net(t)});
+  const gmax=Math.max(1,...Object.values(groups).map(Math.abs));
+  $('marketstats').innerHTML=Object.entries(groups).map(([k,v])=>`<div class="chartrow"><b>${safe(k)}</b><div class="charttrack"><i style="width:${Math.min(100,Math.abs(v)/gmax*100)}%"></i></div><span class="${v>=0?'green':'red'}">${signed(v)}</span></div>`).join('')||'<p class="muted">Add trades to see market breakdown.</p>';
+  const daily={};trades.forEach(t=>daily[t.date]=(daily[t.date]||0)+net(t));
+  const dmax=Math.max(1,...Object.values(daily).map(Math.abs));
+  $('dailyStats').innerHTML=Object.entries(daily).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10).map(([d,v])=>`<div class="chartrow"><b>${safe(d)}</b><div class="charttrack"><i style="width:${Math.min(100,Math.abs(v)/dmax*100)}%"></i></div><span class="${v>=0?'green':'red'}">${signed(v)}</span></div>`).join('')||'<p class="muted">No daily results yet.</p>';
+ }
+ function renderCalendar(){
+  const y=month.getFullYear(),m=month.getMonth(),pre=y+'-'+String(m+1).padStart(2,'0'),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),map={},now=new Date();
+  let sum=0,cnt=0;
+  trades.forEach(t=>{if(t.date?.startsWith(pre)){const d=+t.date.slice(8,10);map[d]=(map[d]||0)+net(t);sum+=net(t);cnt++}});
+  $('monthlabel').textContent=month.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  $('monthsum').innerHTML=cnt?`Month P&amp;L: <b class="${sum>=0?'green':'red'}">${signed(sum)}</b> · ${cnt} trade${cnt>1?'s':''}`:'No trades in this month.';
+  let html=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<div class="muted" style="text-align:center;padding:5px">${x}</div>`).join('');
+  for(let i=0;i<first;i++)html+='<div class="day" style="opacity:.18"></div>';
+  for(let d=1;d<=days;d++){const v=map[d],cl=v>0?'win':v<0?'loss':'',td=(now.getFullYear()===y&&now.getMonth()===m&&now.getDate()===d)?' today':'';html+=`<div class="day ${cl}${td}">${d}${v!==undefined?`<b class="${v>=0?'green':'red'}">${v<0?'−':'+'}${fmt(v)}</b>`:''}</div>`}
+  $('calendar').innerHTML=html;
+ }
+ function row(t,full=false){const v=net(t);return `<tr><td>${safe(t.date)}</td><td><b>${safe(t.symbol)}</b></td><td>${safe(t.market)}</td><td>${safe(t.side)}</td>${full?`<td>${dash(t.entry)}</td><td>${dash(t.exit)}</td><td>${dash(t.qty)}</td>`:''}<td class="${v>=0?'green':'red'}">${signed(v)}</td>${full?`<td title="${safe(t.notes)}">${safe((t.notes||'—').slice(0,35))}</td><td><div class="actions"><button data-edit="${safe(t.id)}">Edit</button><button data-del="${safe(t.id)}">Delete</button></div></td>`:''}</tr>`}
+ function render(){stats();renderCalendar();$('recent').innerHTML=trades.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(t=>row(t)).join('')||'<tr><td colspan="5" class="empty">No trades recorded yet.</td></tr>';filterTrades();renderAccounts()}
+ function filterTrades(){const q=$('search').value.toLowerCase(),m=$('marketfilter').value,s=$('sidefilter').value;const a=trades.slice().sort((x,y)=>y.date.localeCompare(x.date)).filter(t=>(!q||String(t.symbol||'').toLowerCase().includes(q))&&(!m||t.market===m)&&(!s||t.side===s));$('history').innerHTML=a.map(t=>row(t,true)).join('');$('noTrades').classList.toggle('hidden',a.length>0)}
+ function showModal(t){$('tradeform').reset();$('editid').value=t?.id||'';$('formtitle').textContent=t?.id?'Edit trade':'Add trade';$('date').value=t?.date||TXH.today();['symbol','market','side','entry','exit','qty','pnl','fees','acct','notes'].forEach(k=>{if(t&&t[k]!==undefined&&t[k]!=='')$(k).value=t[k]});$('modal').classList.remove('hidden')}
+ const hide=()=>$('modal').classList.add('hidden');
+ $('new1').onclick=()=>showModal();$('new2').onclick=()=>showModal();$('close').onclick=hide;$('cancel').onclick=hide;$('modal').onclick=e=>{if(e.target===$('modal'))hide()};
+ $('tradeform').onsubmit=e=>{e.preventDefault();const id=$('editid').value||uid();const t={id,date:$('date').value,symbol:$('symbol').value.trim().toUpperCase(),market:$('market').value,side:$('side').value,entry:$('entry').value,exit:$('exit').value,qty:$('qty').value,pnl:Number($('pnl').value),fees:Number($('fees').value||0),acct:$('acct').value,notes:$('notes').value};const i=trades.findIndex(x=>x.id===id);if(i>=0)trades[i]=t;else trades.push(t);hide();commit([t])};
+ $('history').onclick=e=>{const del=e.target.dataset.del,edit=e.target.dataset.edit;if(del){if(confirm('Delete this trade?')){trades=trades.filter(t=>t.id!==del);store();render();cloud()?.deleteTrades?.([del])}}if(edit){const t=trades.find(t=>t.id===edit);if(t)showModal(t)}};
+ $('search').oninput=filterTrades;$('marketfilter').onchange=filterTrades;$('sidefilter').onchange=filterTrades;
+ $('prev').onclick=()=>{month.setMonth(month.getMonth()-1);renderCalendar()};$('next').onclick=()=>{month.setMonth(month.getMonth()+1);renderCalendar()};
+ document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('hidden',p.id!==b.dataset.page));if(b.dataset.page==='trades')filterTrades()});
+
+ // ---------- Export / CSV import ----------
+ function download(s,n,type){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([s],{type}));a.href=u;a.download=n;a.click();URL.revokeObjectURL(u)}
+ $('export').onclick=()=>{const cols=['date','symbol','market','side','entry','exit','qty','pnl','fees','acct','notes'];const csv=[cols.join(','),...trades.map(t=>cols.map(k=>'"'+String(t[k]??'').replace(/"/g,'""')+'"').join(','))].join('\n');download(csv,'tradex-trades.csv','text/csv')};
+ const pick=(o,names)=>{for(const n of names){if(o[n]!==undefined&&String(o[n]).trim()!=='')return o[n]}return ''};
+ const toNum=v=>{const s=String(v??'').replace(/[\s,$]/g,'');if(s==='')return NaN;return Number(s)};
+ const dupKey=t=>[t.date,String(t.symbol).toUpperCase(),t.side,Number(t.qty||0),Number(t.entry||0),Number(t.exit||0),Number(t.pnl)].join('|');
+ $('csvfile').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  let txt=(await f.text()).replace(/^\uFEFF/,'');
+  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){$('importmsg').textContent='File looks empty.';e.target.value='';return}
+  const cnt=c=>(lines[0].match(new RegExp(c==='\t'?'\t':'\\'+c,'g'))||[]).length;
+  const d=[',',';','\t'].sort((a,b)=>cnt(b)-cnt(a))[0];
+  const seen={};
+  const h=TXH.splitLine(lines.shift(),d).map(x=>x.trim().toLowerCase().replace(/\s+/g,' ')).map(k=>{if(seen[k]){seen[k]++;return k+'#'+seen[k]}seen[k]=1;return k});
+  const have=new Set(trades.map(dupKey));
+  const added=[];let dup=0,bad=0,skipped=0;
+  for(const l of lines){
+   const a=TXH.splitLine(l,d),o={};h.forEach((k,i)=>o[k]=(a[i]??'').trim());
+   const sideRaw=String(pick(o,['side','type','direction'])).trim();
+   if(/balance|deposit|withdraw|credit|correction|bonus/i.test(sideRaw)){skipped++;continue}
+   const pnl=toNum(pick(o,['pnl','profit','net profit','p&l','gross pnl','gross profit']));
+   const date=TXH.normDate(pick(o,['time#2','close time','closetime','date','time','open time','datetime']));
+   const symbol=String(pick(o,['symbol','instrument','pair'])).toUpperCase();
+   if(!date||!symbol||!Number.isFinite(pnl)){bad++;continue}
+   let fees=0;const fe=toNum(pick(o,['fees','fee']));
+   if(Number.isFinite(fe))fees=Math.abs(fe);
+   else{const c=toNum(pick(o,['commission'])),s=toNum(pick(o,['swap']));fees=-((Number.isFinite(c)?c:0)+(Number.isFinite(s)?s:0));fees=Math.round(fees*100)/100}
+   const side=/buy|long/i.test(sideRaw)?'Buy':/sell|short/i.test(sideRaw)?'Sell':'';
+   const t={id:uid(),date,symbol,market:pick(o,['market'])||TXH.guessMarket(symbol),side,entry:pick(o,['open price','entry','price','entry price']),exit:pick(o,['close price','exit','price#2','exit price']),qty:pick(o,['quantity','qty','volume','lots','size']),pnl,fees,acct:pick(o,['account','acct']),notes:pick(o,['notes','comment'])};
+   const k=dupKey(t);if(have.has(k)){dup++;continue}have.add(k);added.push(t);
+  }
+  trades.push(...added);commit(added);
+  $('importmsg').textContent=`Imported ${added.length} rows · ${dup} duplicates skipped · ${bad} invalid rows${skipped?` · ${skipped} balance/deposit rows ignored`:''}. Commission + swap are counted as cost (negative = charge). Dates like 02/11/2026 are read as DD/MM/YYYY. Please verify the figures.`;
+  e.target.value='';
+ };
+ $('clear').onclick=()=>{
+  if(!trades.length)return;
+  const onCloud=!!cloud()?.active?.();
+  if(!confirm(onCloud?'Delete ALL trades from this browser AND from your cloud account? This cannot be undone.':'Clear every saved trade from this browser?'))return;
+  const ids=trades.map(t=>t.id);trades=[];store();render();cloud()?.deleteTrades?.(ids);
+ };
+
+ // ---------- Accounts ----------
+ $('addaccount').onclick=()=>{const n=prompt('Account name (e.g. Personal, Funded 5K):');if(n?.trim()&&!accounts.includes(n.trim())){accounts.push(n.trim());store();cloud()?.saveAccounts?.([n.trim()]);renderAccounts()}};
+ function renderAccounts(){$('accountlist').innerHTML=accounts.length?accounts.map((a,i)=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)"><span>${safe(a)}</span><button class="btn" data-acctdel="${i}">Remove</button></div>`).join(''):'No accounts added yet.'}
+ $('accountlist').onclick=e=>{if(e.target.dataset.acctdel!==undefined){const name=accounts.splice(+e.target.dataset.acctdel,1)[0];store();cloud()?.deleteAccount?.(name);renderAccounts()}};
+
+ // ---------- Screenshot import ----------
+ const shotModal=$('screenshotModal');let lastDrafts=[];
+ function resetShot(){$('shotStatus').textContent='';$('shotPreview').classList.add('hidden');$('shotDrafts').classList.add('hidden');$('shotDrafts').innerHTML='';$('shotFile').value='';lastDrafts=[]}
+ $('screenshotBtn').onclick=()=>{resetShot();shotModal.classList.remove('hidden')};
+ $('shotClose').onclick=()=>shotModal.classList.add('hidden');
+ shotModal.onclick=e=>{if(e.target===shotModal)shotModal.classList.add('hidden')};
+ $('shotFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=$('shotPreview');img.src=URL.createObjectURL(f);img.classList.remove('hidden');$('shotDrafts').classList.add('hidden');$('shotStatus').textContent='Screenshot ready.'};
+ function showDrafts(drafts){
+  lastDrafts=drafts;const box=$('shotDrafts');
+  box.innerHTML=`<p class="notice">${drafts.length} trades detected. Tick the ones to add. Fix any mistakes afterwards with Edit in Trade history.</p>`+drafts.map((d,i)=>`<label class="draft"><input type="checkbox" data-i="${i}" ${d.pnl===''?'disabled':'checked'}><span><b>${safe(d.symbol)}</b> ${safe(d.side||'?')} ${d.qty===''?'':safe(d.qty)+' lots'} · ${safe(d.date)} · <b class="${Number(d.pnl)>=0?'green':'red'}">${d.pnl===''?'P&amp;L ?':signed(Number(d.pnl))}</b>${d.check?' <span class="pill">check</span>':''}</span></label>`).join('')+'<div class="toolbar" style="margin-top:10px"><button class="btn primary" id="addDrafts" type="button">Add selected</button></div>';
+  box.classList.remove('hidden');
+  $('addDrafts').onclick=()=>{
+   const sel=[...box.querySelectorAll('input:checked')].map(c=>lastDrafts[+c.dataset.i]);
+   if(!sel.length){$('shotStatus').textContent='Select at least one trade.';return}
+   const items=sel.map(({check,...t})=>({...t,id:uid(),pnl:Number(t.pnl)}));
+   trades.push(...items);commit(items);shotModal.classList.add('hidden');
+  };
+ }
+ $('readShot').onclick=async()=>{
+  const f=$('shotFile').files[0];
+  if(!f){$('shotStatus').textContent='Please select a screenshot.';return}
+  if(!window.Tesseract){$('shotStatus').textContent='OCR library failed to load. Check internet.';return}
+  const btn=$('readShot');btn.disabled=true;$('shotStatus').textContent='Reading screenshot…';$('shotDrafts').classList.add('hidden');
+  let worker;
+  try{
+   worker=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status==='recognizing text')$('shotStatus').textContent='Reading… '+Math.round((m.progress||0)*100)+'%'}});
+   await worker.setParameters({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'});
+   const {data}=await worker.recognize(f);
+   const txt=data.text||'';
+   const drafts=TXH.parseShot(txt);
+   if(drafts.length>1){$('shotStatus').textContent='Review detected trades below.';showDrafts(drafts)}
+   else{
+    shotModal.classList.add('hidden');
+    if(drafts.length===1){const d=drafts[0];showModal({...d,notes:d.notes+'\n'+txt.slice(0,600)})}
+    else showModal({notes:'Imported from screenshot — no trade detected, fill the fields manually.\n'+txt.slice(0,800)});
+    $('formtitle').textContent='Review Screenshot Trade';
+   }
+  }catch(err){$('shotStatus').textContent='OCR error: '+err.message}
+  finally{btn.disabled=false;try{await worker?.terminate()}catch{}}
+ };
+
+ // ---------- API for the cloud layer ----------
+ window.TradeXApp={
+  DEMO_KEY,
+  load(key,cloudRows,cloudAccts){
+   KEY=key;
+   if(key===DEMO_KEY&&localStorage.getItem(key)===null){const old=rd(LEGACY,null);if(Array.isArray(old)){try{localStorage.setItem(key,JSON.stringify(old));const oa=rd(LEGACY+'_accounts',null);if(oa)localStorage.setItem(key+'_accounts',JSON.stringify(oa))}catch{}}}
+   let local=rd(key,[]),localA=rd(key+'_accounts',[]);
+   if(!Array.isArray(local))local=[];if(!Array.isArray(localA))localA=[];
+   let localOnly=[];
+   if(cloudRows){const ids=new Set(cloudRows.map(t=>t.id));localOnly=local.filter(t=>!ids.has(t.id));trades=cloudRows.concat(localOnly);accounts=[...new Set([...(cloudAccts||[]),...localA])]}
+   else{trades=local;accounts=localA}
+   store();month=new Date();month.setDate(1);render();
+   return{localOnly,accounts:accounts.slice()};
+  },
+  loadDemo(){return this.load(DEMO_KEY)},
+  reset(){KEY=null;trades=[];accounts=[];render()}
+ };
+ render();
+})();
+</script>
+
+<script>
+(()=>{
+ const SUPABASE_URL='https://hrbouoehkawnmfkbdexm.supabase.co';
+ const SUPABASE_ANON_KEY='sb_publishable_x0zrlLkOwLt_9H99X4eLUA_C-5b_eYt';
+ const configured=!SUPABASE_URL.includes('YOUR_PROJECT_ID')&&!SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
+ const $=id=>document.getElementById(id);let mode='login',client=null,currentUser=null;
+ const msg=t=>$('authMessage').textContent=t;
+ const tag=(t,bad)=>{const e=$('syncTag');e.textContent=t;e.style.color=bad?'var(--red)':''};
+ if(configured&&window.supabase?.createClient){client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}
+ const num=v=>(v===''||v==null||!Number.isFinite(Number(v)))?null:Number(v);
+ const toRow=t=>({id:t.id,user_id:currentUser.id,trade_date:t.date,symbol:t.symbol,market:t.market,side:t.side,entry_price:num(t.entry),exit_price:num(t.exit),quantity:num(t.qty),gross_pnl:Number(t.pnl),fees:Number(t.fees||0),account_name:t.acct||null,notes:t.notes||null});
+ const fromRow=x=>({id:x.id,date:x.trade_date,symbol:x.symbol,market:x.market,side:x.side,entry:x.entry_price??'',exit:x.exit_price??'',qty:x.quantity??'',pnl:Number(x.gross_pnl),fees:Number(x.fees),acct:x.account_name||'',notes:x.notes||''});
+ async function fetchTrades(){const size=1000;let from=0,out=[];for(;;){const {data,error}=await client.from('trades').select('*').order('trade_date',{ascending:false}).order('id').range(from,from+size-1);if(error)throw error;out=out.concat(data||[]);if(!data||data.length<size)break;from+=size}return out}
+ function showApp(user,demo=false){currentUser=demo?null:user;$('authscreen').classList.add('hidden');$('appRoot').classList.remove('hidden');$('userBadge').textContent=demo?'Demo mode':(user?.email||'Signed in');$('signout').textContent=demo?'Exit demo':'Sign out';tag(demo?'Local only':'Synced')}
+ function setMode(m){mode=m;$('loginTab').classList.toggle('primary',m==='login');$('signupTab').classList.toggle('primary',m==='signup');$('authSubmit').textContent=m==='login'?'Login':'Create account';$('authPassword').autocomplete=m==='login'?'current-password':'new-password';msg(configured?'Secure cloud authentication enabled.':'Cloud backend is not configured yet. Use demo or add Supabase keys.')}
+ $('loginTab').onclick=()=>setMode('login');$('signupTab').onclick=()=>setMode('signup');
+ $('demoEnter').onclick=()=>{localStorage.setItem('tradex_demo_mode','1');TradeXApp.loadDemo();showApp(null,true)};
+ $('authform').onsubmit=async e=>{e.preventDefault();if(!client){msg('Cloud login is not active yet. Add your Supabase URL and anon key in this file, then run the SQL setup. Demo mode is available below.');return}const email=$('authEmail').value.trim(),password=$('authPassword').value;msg('Please wait…');try{const r=mode==='signup'?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});if(r.error)throw r.error;if(mode==='signup'&&!r.data.session){msg('Account created. Check your email to confirm, then log in.');return}localStorage.removeItem('tradex_demo_mode');await startCloud(r.data.user)}catch(err){msg(err.message||'Authentication failed.')}};
+ $('googleAuth').onclick=async()=>{if(!client){msg('Google login will work after Supabase is configured and Google provider is enabled.');return}const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href}});if(error)msg(error.message)};
+ async function startCloud(user){
+  currentUser=user;
+  try{
+   const rows=(await fetchTrades()).map(fromRow);
+   const a=await client.from('trading_accounts').select('name').order('created_at');
+   const names=a.error?[]:(a.data||[]).map(x=>x.name);
+   const r=TradeXApp.load('tradex_journal_u_'+user.id,rows,names);
+   showApp(user);
+   // push anything that only existed locally (never deletes anything in the cloud)
+   if(r.localOnly.length)await TradeXCloud.upsertTrades(r.localOnly);
+   if(r.accounts.length)await TradeXCloud.saveAccounts(r.accounts);
+  }catch(err){currentUser=null;msg('Signed in, but data could not load: '+err.message)}
+ }
+ window.TradeXCloud={
+  active:()=>!!(client&&currentUser),
+  async upsertTrades(items){if(!client||!currentUser||!items?.length)return;tag('Syncing…');try{for(let i=0;i<items.length;i+=500){const {error}=await client.from('trades').upsert(items.slice(i,i+500).map(toRow));if(error)throw error}tag('Synced')}catch(e){console.error('Cloud sync error',e);tag('Sync error',true);msg('Cloud sync issue: '+e.message)}},
+  async deleteTrades(ids){if(!client||!currentUser||!ids?.length)return;tag('Syncing…');try{for(let i=0;i<ids.length;i+=100){const {error}=await client.from('trades').delete().in('id',ids.slice(i,i+100)).eq('user_id',currentUser.id);if(error)throw error}tag('Synced')}catch(e){console.error('Cloud delete error',e);tag('Sync error',true);msg('Cloud delete issue: '+e.message)}},
+  async saveAccounts(names){if(!client||!currentUser||!names?.length)return;try{const {error}=await client.from('trading_accounts').upsert(names.map(name=>({user_id:currentUser.id,name})),{onConflict:'user_id,name'});if(error)throw error}catch(e){console.error(e);tag('Sync error',true)}},
+  async deleteAccount(name){if(!client||!currentUser)return;try{const {error}=await client.from('trading_accounts').delete().eq('user_id',currentUser.id).eq('name',name);if(error)throw error}catch(e){console.error(e);tag('Sync error',true)}}
+ };
+ $('signout').onclick=async()=>{try{if(client&&currentUser)await client.auth.signOut()}catch(e){console.error(e)}localStorage.removeItem('tradex_demo_mode');currentUser=null;TradeXApp.reset();$('appRoot').classList.add('hidden');$('authscreen').classList.remove('hidden');msg('You have signed out.')};
+ async function init(){
+  if(localStorage.getItem('tradex_demo_mode')==='1'){TradeXApp.loadDemo();showApp(null,true);return}
+  if(client){try{const {data}=await client.auth.getSession();if(data.session){await startCloud(data.session.user);return}}catch(e){console.error(e)}}
+  setMode('login');
+ }
+ init();
+})();
+</script>
+</body></html>
