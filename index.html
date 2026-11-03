@@ -36,6 +36,8 @@
 const TXH=(()=>{
  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
  const DATE_RE=/(20\d{2}[-/.]\d{1,2}[-/.]\d{1,2})|(\d{1,2}[-/.]\d{1,2}[-/.]20\d{2})/g;
+ const OPEN_RE=/\bopen\w*\b\s*:?\s*(?:20\d{2}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}[-/.]\d{1,2}[-/.]20\d{2})(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?/gi;
+ const SLTP_RE=/\b(?:S\s*\/\s*L|T\s*\/\s*P|SL|TP)\b\s*:?\s*[-+]?\d+(?:\.\d+)?/gi;
  const SYM=/\b((?:XAU|XAG|BTC|ETH|USD|EUR|GBP|JPY|AUD|CAD|NZD|CHF)(?:USDT|USD|EUR|GBP|JPY|AUD|CAD|NZD|CHF))[a-z.#]{0,4}\b/i;
  function normDate(s){s=String(s||'').trim();let m=s.match(/(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');m=s.match(/(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return ''}
  function guessMarket(sym){sym=String(sym||'').toUpperCase();if(/^(XAU|XAG)/.test(sym))return 'Gold';if(/^(BTC|ETH)/.test(sym)||/USDT$/.test(sym))return 'Crypto';if(/^[A-Z]{6}/.test(sym))return 'Forex';return 'Other'}
@@ -48,12 +50,12 @@ const TXH=(()=>{
   const gd=[...txt.matchAll(DATE_RE)].map(m=>normDate(m[0])).filter(Boolean);
   const out=[];
   idx.forEach((start,k)=>{
-   const end=Math.min(idx[k+1]??lines.length,start+4);
-   const block=lines.slice(start,end).join(' ');
+   const end=Math.min(idx[k+1]??lines.length,start+6);
+   const block=lines.slice(start,end).join(' ').replace(OPEN_RE,' ');
    const symbol=block.match(SYM)[1].toUpperCase();
    const dates=[...block.matchAll(DATE_RE)].map(m=>normDate(m[0])).filter(Boolean);
    const date=dates[dates.length-1]||gd[gd.length-1]||today();
-   let body=block.replace(DATE_RE,' ').replace(/\d{1,2}:\d{2}(?::\d{2})?/g,' ').replace(SYM,' ');
+   let body=block.replace(DATE_RE,' ').replace(/\d{1,2}:\d{2}(?::\d{2})?/g,' ').replace(SYM,' ').replace(/#\d+/g,' ').replace(SLTP_RE,' ');
    const sideM=body.match(/\b(buy|sell|long|short)\b/i);
    const side=sideM?(/buy|long/i.test(sideM[1])?'Buy':'Sell'):'';
    let qty='';
