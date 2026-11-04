@@ -299,17 +299,18 @@ const TXH=(()=>{
  $('shotClose').onclick=()=>shotModal.classList.add('hidden');
  shotModal.onclick=e=>{if(e.target===shotModal)shotModal.classList.add('hidden')};
  $('shotFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=$('shotPreview');img.src=URL.createObjectURL(f);img.classList.remove('hidden');$('shotDrafts').classList.add('hidden');$('shotStatus').textContent='Screenshot ready.'};
- function markDup(ds){ds.forEach(d=>{d.dup=trades.some(t=>(d.ticket&&String(t.notes||'').includes('#'+d.ticket))||(d.entry!==''&&t.date===d.date&&String(t.symbol).toUpperCase()===d.symbol&&Number(t.qty)===Number(d.qty)&&Number(t.entry)===Number(d.entry)&&Number(t.exit)===Number(d.exit)))})}
+ function markDup(ds){ds.forEach(d=>{const ex=trades.find(t=>(d.ticket&&String(t.notes||'').includes('#'+d.ticket))||(d.entry!==''&&t.date===d.date&&String(t.symbol).toUpperCase()===d.symbol&&Number(t.qty)===Number(d.qty)&&Number(t.entry)===Number(d.entry)&&Number(t.exit)===Number(d.exit)));d.exId=ex?ex.id:null;d.upd=!!(ex&&(d.sl||d.tp)&&!(ex.sl||ex.tp));d.dup=trades.some(t=>(d.ticket&&String(t.notes||'').includes('#'+d.ticket))||(d.entry!==''&&t.date===d.date&&String(t.symbol).toUpperCase()===d.symbol&&Number(t.qty)===Number(d.qty)&&Number(t.entry)===Number(d.entry)&&Number(t.exit)===Number(d.exit)))})}
  $('readPaste').onclick=()=>{const txt=$('pasteBox').value;$('shotDrafts').classList.add('hidden');if(!txt.trim()){$('shotStatus').textContent='Paste the table text first.';return}let d=TXH.parseTable(txt);if(!d.length)d=TXH.parseShot(txt);if(!d.length){$('shotStatus').textContent='No trades found. Copy the whole table (Ticket to P&L columns) and paste again.';return}markDup(d);$('shotStatus').textContent='';showDrafts(d)};
  function showDrafts(drafts){
   lastDrafts=drafts;const box=$('shotDrafts');
-  box.innerHTML=`<p class="notice">${drafts.length} trades detected. Tick the ones to add. Fix any mistakes afterwards with Edit in Trade history.</p>`+drafts.map((d,i)=>`<label class="draft"><input type="checkbox" data-i="${i}" ${d.pnl===''?'disabled':d.dup?'':'checked'}><span><b>${safe(d.symbol)}</b> ${safe(d.side||'?')} ${d.qty===''?'':safe(d.qty)+' lots'} · ${safe(d.date)} · <b class="${Number(d.pnl)>=0?'green':'red'}">${d.pnl===''?'P&amp;L ?':signed(Number(d.pnl))}</b>${d.dup?' <span class="pill">already added</span>':''}${d.check?' <span class="pill">check</span>':''}</span></label>`).join('')+'<div class="toolbar" style="margin-top:10px"><button class="btn primary" id="addDrafts" type="button">Add selected</button></div>';
+  box.innerHTML=`<p class="notice">${drafts.length} trades detected. Tick the ones to add. Fix any mistakes afterwards with Edit in Trade history.</p>`+drafts.map((d,i)=>`<label class="draft"><input type="checkbox" data-i="${i}" ${d.pnl===''?'disabled':(d.dup&&!d.upd)?'':'checked'}><span><b>${safe(d.symbol)}</b> ${safe(d.side||'?')} ${d.qty===''?'':safe(d.qty)+' lots'} · ${safe(d.date)} · <b class="${Number(d.pnl)>=0?'green':'red'}">${d.pnl===''?'P&amp;L ?':signed(Number(d.pnl))}</b>${d.upd?' <span class="pill">update SL/TP</span>':d.dup?' <span class="pill">already added</span>':''}${d.check?' <span class="pill">check</span>':''}</span></label>`).join('')+'<div class="toolbar" style="margin-top:10px"><button class="btn primary" id="addDrafts" type="button">Add selected</button></div>';
   box.classList.remove('hidden');
   $('addDrafts').onclick=()=>{
    const sel=[...box.querySelectorAll('input:checked')].map(c=>lastDrafts[+c.dataset.i]);
    if(!sel.length){$('shotStatus').textContent='Select at least one trade.';return}
-   const items=sel.map(({check,dup,ticket,...t})=>({...t,id:uid(),pnl:Number(t.pnl)}));
-   trades.push(...items);commit(items);shotModal.classList.add('hidden');
+   const ups=[];sel.filter(d=>d.dup&&d.upd).forEach(d=>{const ex=trades.find(t=>t.id===d.exId);if(ex){ex.sl=d.sl;ex.tp=d.tp;ups.push(ex)}});
+   const items=sel.filter(d=>!d.dup).map(({check,dup,upd,exId,ticket,...t})=>({...t,id:uid(),pnl:Number(t.pnl)}));
+   trades.push(...items);commit(items.concat(ups));shotModal.classList.add('hidden');
   };
  }
  $('readShot').onclick=async()=>{
